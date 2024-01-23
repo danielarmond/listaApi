@@ -1,0 +1,21 @@
+pring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: root
+    url: jdbc:mysql://localhost:3306/listaapi
+    username: root
+    validationQuerry: SELECT 1
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.MySQLDialect
+      naming-strategy: org.hibernate.cfg.ImproveNamingStrategy
+    properties:
+      hibernate:
+        show_sql: true
+    show-sql: false
