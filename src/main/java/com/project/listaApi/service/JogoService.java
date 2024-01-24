@@ -27,8 +27,20 @@ public class JogoService {
         return jogoRepository.save(jogo);
     }
 
-    public Jogo atualizaJogo(Jogo jogo) {
-        return jogoRepository.save(jogo);
+    public Jogo atualizaJogo(Long id, Jogo jogoAtualizado) {
+        Jogo jogoExistente = buscaJogoPorId(id);
+
+        if (jogoExistente != null) {
+            jogoExistente.setNome(jogoAtualizado.getNome());
+            jogoExistente.setUrlImagem(jogoAtualizado.getUrlImagem());
+            jogoExistente.setCategoria(jogoAtualizado.getCategoria());
+            jogoExistente.setNota(jogoAtualizado.getNota());
+            jogoExistente.setTier(jogoAtualizado.getTier());
+
+            return jogoRepository.save(jogoExistente);
+        } else {
+            return null;
+        }
     }
 
     public Jogo buscaJogoPorId(Long id) {

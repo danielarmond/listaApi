@@ -34,17 +34,11 @@ public class JogoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Jogo> atualizaJogo(@PathVariable("id") Long id, @RequestBody Jogo jogo) {
-        Jogo jogoExistente = jogoService.buscaJogoPorId(id);
-        if (jogoExistente != null) {
-            jogoExistente.setNome(jogo.getNome());
-            jogoExistente.setUrlImagem(jogo.getUrlImagem());
-            jogoExistente.setCategoria(jogo.getCategoria());
-            jogoExistente.setNota(jogo.getNota());
-            jogoExistente.setTier(jogo.getTier());
+        Jogo jogoAtualizado = jogoService.atualizaJogo(id, jogo);
 
-            Jogo atualizaJogo = jogoService.atualizaJogo(jogoExistente);
-        return new ResponseEntity<>(atualizaJogo, HttpStatus.OK);
-    } else{
+        if (jogoAtualizado != null) {
+            return new ResponseEntity<>(jogoAtualizado, HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
