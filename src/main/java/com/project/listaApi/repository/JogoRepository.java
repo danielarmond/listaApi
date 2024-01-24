@@ -1,10 +1,13 @@
 package com.project.listaApi.repository;
 import com.project.listaApi.model.Jogo;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import java.util.List;
+import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface JogoRepository  extends JpaRepository<Jogo, Long> {
-    @Query(value = "SELECT u FROM Jogo u WHERE u.nome = ?1")
-    List<Jogo> buscaNome(String descricao);
+
+    void deleteJogoById(Long id);
+
+    Optional<Jogo> findJogoById(Long id);
 }

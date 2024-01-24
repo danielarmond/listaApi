@@ -1,10 +1,9 @@
 package com.project.listaApi.controller;
-import com.project.listaApi.dto.JogoDto;
 import com.project.listaApi.model.Jogo;
 import com.project.listaApi.service.JogoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,63 +13,45 @@ import java.util.List;
 public class JogoController {
 
     @Autowired
-    private JogoService jogoService;
-
-    @PostMapping
-    @Transactional
-    public ResponseEntity<JogoDto> criarJogo(@RequestBody JogoDto jogoDto) {
-        Jogo jogoCriado = jogoService.criarJogo(jogoDto);
-        JogoDto jogoCriadoDto = jogoService.converterParaDto(jogoCriado);
-        return ResponseEntity.status(201).body(jogoCriadoDto);
-    }
-
+    JogoService jogoService;
     @GetMapping
-    public ResponseEntity<List<JogoDto>> listarJogos() {
-        List<Jogo> jogos = jogoService.listarJogos();
-        List<JogoDto> jogosDto = jogoService.converterParaDto(jogos);
-        return ResponseEntity.ok(jogosDto);
+    public ResponseEntity<List<Jogo>> listarJogos () {
+        List<Jogo> employees = jogoService.listaJogos();
+        return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JogoDto> obterJogoPorId(@PathVariable Long id) {
-        Jogo jogo = jogoService.obterJogoPorId(id);
-        if (jogo != null) {
-            JogoDto jogoDto = jogoService.converterParaDto(jogo);
-            return ResponseEntity.ok(jogoDto);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Jogo> buscaJogoPorId (@PathVariable("id") Long id) {
+        Jogo jogo = jogoService.buscaJogoPorId(id);
+        return new ResponseEntity<>(jogo, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<Jogo> adicionaJogo(@RequestBody Jogo jogo) {
+        Jogo novoJogo = jogoService.adicionaJogo(jogo);
+        return new ResponseEntity<>(novoJogo, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    @Transactional
-    public ResponseEntity<JogoDto> atualizarJogo(@PathVariable Long id, @RequestBody JogoDto atualizacaoJogoDto) {
-        Jogo jogoAtualizado = jogoService.obterJogoPorId(id);
+    public ResponseEntity<Jogo> atualizaJogo(@PathVariable("id") Long id, @RequestBody Jogo jogo) {
+        Jogo jogoExistente = jogoService.buscaJogoPorId(id);
+        if (jogoExistente != null) {
+            jogoExistente.setNome(jogo.getNome());
+            jogoExistente.setUrlImagem(jogo.getUrlImagem());
+            jogoExistente.setCategoria(jogo.getCategoria());
+            jogoExistente.setNota(jogo.getNota());
+            jogoExistente.setTier(jogo.getTier());
 
-        if (jogoAtualizado != null) {
-            jogoAtualizado.setNome(atualizacaoJogoDto.getNome());
-            jogoAtualizado.setUrlImagem(atualizacaoJogoDto.getUrlImagem());
-            jogoAtualizado.setCategoria(atualizacaoJogoDto.getCategoria());
-            jogoAtualizado.setNota(atualizacaoJogoDto.getNota());
-            jogoAtualizado.setTier(atualizacaoJogoDto.getTier());
-
-            jogoAtualizado = jogoService.atualizarJogo(jogoAtualizado);
-            JogoDto jogoAtualizadoDto = jogoService.converterParaDto(jogoAtualizado);
-            return ResponseEntity.ok(jogoAtualizadoDto);
-        } else {
-            return ResponseEntity.notFound().build();
+            Jogo atualizaJogo = jogoService.atualizaJogo(jogoExistente);
+        return new ResponseEntity<>(atualizaJogo, HttpStatus.OK);
+    } else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
-    public ResponseEntity<Void> excluirJogo(@PathVariable Long id) {
-        Jogo jogo = jogoService.obterJogoPorId(id);
-        if (jogo != null) {
-            jogoService.excluirJogo(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<?> deletaJogo(@PathVariable("id") Long id) {
+        jogoService.deletaJogo(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
