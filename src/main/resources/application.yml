@@ -4,7 +4,7 @@ spring:
     password: root
     url: jdbc:mysql://localhost:3307/listaapi
     username: root
-    validationQuerry: SELECT 1
+    validationQuery: SELECT 1
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,3 +16,8 @@ spring:
       hibernate:
         show_sql: true
     show-sql: false
+
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:my-secret-key}
